@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CASE NO. 001 // THE PALMRIDGE PROBLEM</title>
+<meta name="description" content="Case No. 001: The Palmridge Problem. A sales ledger audit of 150,000 records. Part of the Case Files series by Semilore James.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<style>
+/* ========== RESET & BASE SYSTEM ========== */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Courier Prime', monospace;
+  background-color: #1c130e;
+  color: #222;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  user-select: none;
+}
+
+/* ========== CORKBOARD BACKGROUND ========== */
+.corkboard {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background-color: #38251a;
+  background-image: 
+    radial-gradient(circle at 50% 50%, transparent 60%, rgba(0,0,0,0.4)),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 250 250' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='cf'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.28 0 0 0 0 0.18 0 0 0 0 0.12 0 0 0 0.16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23cf)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  box-shadow: inset 0 0 100px rgba(0,0,0,0.8);
+  overflow: auto;
+}
+
+/* Wood frame */
+.corkboard::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 16px solid #23160f;
+  border-image: linear-gradient(to bottom, #2b1d14, #1b0e07) 16;
+  pointer-events: none;
+  z-index: 100;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
+}
+
+/* ========== TOP STATUS BAR ========== */
+.top-bar {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  height: 42px;
+  background-color: #111;
+  color: #00ff66;
+  border-bottom: 2px solid #222;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  font-family: 'Special Elite', system-ui;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  z-index: 90;
+}
+.status-badge {
+  padding: 2px 10px;
+  font-weight: bold;
+  border-radius: 2px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+.badge-open { background-color: #cc8800; color: #fff; }
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: 1px solid #00ff6644;
+  color: #00ff66;
+  font-family: 'Special Elite', system-ui;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  padding: 4px 14px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.back-btn:hover {
+  background: #00ff6622;
+  border-color: #00ff66;
+}
+
+/* ========== RED STRING SVG OVERLAY ========== */
+.string-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* ========== CLUE CARDS ========== */
+.clue-card {
+  position: absolute;
+  background-color: #f5f0e8;
+  border: 1px solid #e1d9cc;
+  box-shadow: 3px 6px 12px rgba(0,0,0,0.35), 0 0 40px rgba(0,0,0,0.06) inset;
+  padding: 16px;
+  width: 250px;
+  cursor: pointer;
+  z-index: 20;
+  transition: transform 0.2s, box-shadow 0.2s, z-index 0.1s;
+}
+.clue-card:hover {
+  transform: scale(1.03) rotate(0deg) !important;
+  box-shadow: 8px 12px 20px rgba(0,0,0,0.5);
+  z-index: 50;
+}
+.clue-card h3 {
+  font-family: 'Special Elite', system-ui;
+  font-size: 1rem;
+  text-decoration: underline;
+  text-decoration-color: #cc0000;
+  text-underline-offset: 3px;
+  margin-bottom: 6px;
+  color: #cc0000;
+  letter-spacing: 0.5px;
+}
+.clue-card p { font-size: 0.75rem; line-height: 1.4; color: #333; }
+.clue-card .card-lead { font-weight: bold; margin-bottom: 4px; }
+.clue-card .badge {
+  display: inline-block;
+  font-size: 0.6rem;
+  background: #ebdcb9;
+  border: 1px solid #b8a988;
+  padding: 1px 5px;
+  margin-top: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Lined paper effect */
+.lined-paper {
+  background: #f5f0e8 repeating-linear-gradient(transparent, transparent 19px, #e1d9cc 19px, #e1d9cc 20px);
+  line-height: 20px !important;
+}
+
+/* ========== CASE DOSSIER BRIEF ========== */
+.case-brief {
+  position: absolute;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 680px;
+  max-width: 88%;
+  background: #f7eedb;
+  border: 1px solid #d4c8b0;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+  padding: 20px;
+  font-family: 'Special Elite', system-ui;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: #2b231a;
+  z-index: 85;
+}
+.case-brief h2 {
+  font-size: 1.05rem;
+  margin-bottom: 8px;
+  border-bottom: 1px dashed #d1bda2;
+  padding-bottom: 4px;
+}
+
+/* ========== POLAROID (SUSPECT) CARD ========== */
+.polaroid-card {
+  position: absolute;
+  width: 220px;
+  background: #fcfbfa;
+  padding: 10px 10px 18px;
+  border: 1px solid #ddd;
+  box-shadow: 4px 8px 16px rgba(0,0,0,0.4);
+  text-align: center;
+  z-index: 25;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, z-index 0.1s;
+}
+.polaroid-card:hover {
+  transform: scale(1.04) rotate(0deg) !important;
+  box-shadow: 8px 12px 20px rgba(0,0,0,0.5);
+  z-index: 50;
+}
+.polaroid-photo {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  background: #1a1a1a;
+  margin-bottom: 10px;
+  overflow: hidden;
+  border: 1px solid #ccc;
+}
+.polaroid-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: contrast(1.1) saturate(0.85);
+}
+.polaroid-photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 30px rgba(0,0,0,0.7);
+  pointer-events: none;
+}
+.polaroid-card h4 {
+  font-family: 'Special Elite', system-ui;
+  font-size: 1rem;
+  color: #111;
+}
+.polaroid-card .poi-label {
+  font-size: 0.6rem;
+  color: #cc0000;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+.polaroid-card .poi-desc {
+  font-size: 0.62rem;
+  color: #555;
+  margin-top: 4px;
+  line-height: 1.3;
+}
+
+/* ========== OFFER LETTER CARD ========== */
+.offer-card {
+  position: absolute;
+  width: 210px;
+  background: #fff;
+  border: 1px solid #ddd;
+  box-shadow: 3px 6px 15px rgba(0,0,0,0.3);
+  padding: 14px;
+  z-index: 15;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.offer-card:hover {
+  transform: scale(1.03) rotate(0deg) !important;
+  box-shadow: 8px 12px 20px rgba(0,0,0,0.5);
+  z-index: 50;
+}
+.offer-card .letter-header {
+  font-family: 'Special Elite', system-ui;
+  font-size: 0.72rem;
+  text-align: center;
+  border-bottom: 2px solid #111;
+  padding-bottom: 6px;
+  margin-bottom: 8px;
+}
+.offer-card .letter-body {
+  font-size: 0.58rem;
+  line-height: 1.4;
+  color: #444;
+}
+
+/* ========== VISUAL PINS & CLIPS ========== */
+.pushpin {
+  width: 14px; height: 14px;
+  background: #cc0000;
+  border-radius: 50%;
+  position: absolute;
+  top: -6px; left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 1px 3px 4px rgba(0,0,0,0.5);
+  z-index: 100;
+}
+.pushpin::after {
+  content: '';
+  width: 4px; height: 4px;
+  background: rgba(255,255,255,0.8);
+  border-radius: 50%;
+  position: absolute;
+  top: 3px; left: 3px;
+}
+.pushpin.silver { background: #a1a1a1; }
+.pushpin.blue { background: #0066cc; }
+
+.paperclip {
+  width: 16px; height: 40px;
+  border: 2px solid #888;
+  border-radius: 10px;
+  position: absolute;
+  top: -15px; left: 20px;
+  transform: rotate(-10deg);
+  z-index: 95;
+  background: transparent;
+}
+
+/* ========== OPEN STAMP ========== */
+.case-stamp {
+  position: absolute;
+  top: 38%;
+  left: 44%;
+  transform: rotate(-18deg);
+  border: 4px double;
+  font-family: 'Special Elite', system-ui;
+  font-size: 2.5rem;
+  font-weight: bold;
+  padding: 4px 20px;
+  opacity: 0.18;
+  letter-spacing: 5px;
+  pointer-events: none;
+  z-index: 5;
+}
+.case-stamp.open { color: #cc8800; border-color: #cc8800; }
+
+/* ========== MODAL SYSTEM ========== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15,10,8,0.92);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.modal-overlay.active { opacity: 1; pointer-events: all; }
+.modal-container {
+  width: 750px;
+  max-width: 92%;
+  background: #f7eedb;
+  border: 4px solid #332211;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  padding: 30px;
+  position: relative;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+.modal-close-btn {
+  position: absolute;
+  top: 15px; right: 15px;
+  background: #332211;
+  color: #fff;
+  border: none;
+  width: 32px; height: 32px;
+  font-family: 'Special Elite', system-ui;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.modal-close-btn:hover { background: #cc0000; }
+.modal-title {
+  font-family: 'Special Elite', system-ui;
+  font-size: 1.3rem;
+  color: #cc0000;
+  border-bottom: 2px dashed #998877;
+  padding-bottom: 8px;
+  margin-bottom: 20px;
+}
+.modal-text {
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: #332211;
+}
+.modal-text strong { color: #cc0000; }
+
+/* ========== ANIMATED SVG FLOWCHART ========== */
+.flowchart-svg {
+  width: 100%;
+  height: 320px;
+  background: #ebdcb9;
+  border: 1px solid #d4c8b0;
+  margin-bottom: 16px;
+}
+.flowchart-svg text {
+  font-family: 'Courier Prime', monospace;
+  font-size: 11px;
+  fill: #111;
+}
+.flowchart-svg .node-rect {
+  fill: #f5f0e8;
+  stroke: #222;
+  stroke-width: 1.5;
+  rx: 3;
+}
+.flowchart-svg .node-rect.danger { stroke: #cc0000; }
+.flowchart-svg .node-rect.success { stroke: #008833; }
+.flowchart-svg .flow-path {
+  fill: none;
+  stroke: #332211;
+  stroke-width: 2;
+  stroke-dasharray: 4 4;
+  animation: lineDash 20s linear infinite;
+}
+@keyframes lineDash { to { stroke-dashoffset: -100; } }
+
+/* Sequenced node animations */
+.anim-node {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.modal-overlay.active .anim-node.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ========== CARD POSITIONS ========== */
+#ch1-dates   { top: 23%; left: 6%;  transform: rotate(-2deg); }
+#ch1-regions { top: 58%; left: 12%; transform: rotate(1.5deg); }
+#ch1-promo   { top: 16%; left: 72%; transform: rotate(2.5deg); }
+#ch1-nulls   { top: 56%; left: 70%; transform: rotate(-1deg); }
+#ch1-revenue { top: 63%; left: 40%; transform: rotate(-2.5deg); }
+#ch1-tunde   { top: 36%; left: 42%; transform: rotate(1deg); }
+#ch1-offer   { top: 48%; left: 82%; transform: rotate(-4deg); }
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 900px) {
+  .clue-card { width: 200px; }
+  .polaroid-card { width: 180px; }
+  .case-brief { width: 90%; font-size: 0.8rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="corkboard" id="chapter-1">
+  <svg class="string-overlay" id="ch1-strings"></svg>
+
+  <div class="case-stamp open">OPEN</div>
+
+  <!-- Status Bar with Back Button -->
+  <div class="top-bar">
+    <div style="display:flex; align-items:center; gap:16px;">
+      <a class="back-btn" href="../index.html">◄ WALL</a>
+      <span>CASE FILE NO. 001 // THE PALMRIDGE PROBLEM</span>
+    </div>
+    <div>STATUS: <span class="status-badge badge-open">OPEN</span></div>
+  </div>
+
+  <!-- Case Dossier Brief -->
+  <div class="case-brief">
+    <div class="pushpin silver"></div>
+    <h2>THE DOSSIER: PALMRIDGE CONSUMER PRODUCTS</h2>
+    <p>
+      150,000 rows. 18 columns. A junior data reporting analyst (SJ) walks into GridView Analytics and is handed what looks like a simple data audit. 
+      But the numbers didn't make sense. Region names that couldn't make up their mind. Dates formatted like three different offices wrote them on three different days. 
+      And the revenue… the numbers just didn't multiply. Someone was either incredibly incompetent, or someone was covering their tracks. 
+      The trail is still warm. The investigation continues.
+    </p>
+  </div>
+
+  <!-- Lead 01: Date Obfuscation -->
+  <div class="clue-card" id="ch1-dates" onclick="openModal('modal-dates')">
+    <div class="pushpin"></div>
+    <h3>LEAD 01 // TIME OBFUSCATION</h3>
+    <p class="card-lead"><strong>14,519 broken dates.</strong></p>
+    <p>Inconsistent formats found. Quarter column contradicts the actual transaction dates in 12,400 rows.</p>
+    <div class="badge">Trace Data</div>
+  </div>
+
+  <!-- Lead 02: Region Splitting -->
+  <div class="clue-card lined-paper" id="ch1-regions" onclick="openModal('modal-regions')">
+    <div class="pushpin"></div>
+    <h3>LEAD 02 // GEOGRAPHIC SPLIT</h3>
+    <p class="card-lead"><strong>14 Region Variants.</strong></p>
+    <p>North-West, NW, north west, NC, North Central, etc. Making simple location reports impossible to aggregate.</p>
+    <div class="badge">Trace Data</div>
+  </div>
+
+  <!-- Lead 03: Promo Disguises -->
+  <div class="clue-card" id="ch1-promo" onclick="openModal('modal-promo')">
+    <div class="pushpin"></div>
+    <h3>LEAD 03 // PROMO DISGUISES</h3>
+    <p class="card-lead"><strong>13 Different Flags.</strong></p>
+    <p>130,944 rows with inconsistent promotional entries (Yes, Y, 1, True, YES vs No, N, 0, False).</p>
+    <div class="badge">Trace Data</div>
+  </div>
+
+  <!-- Lead 04: Missing Evidence -->
+  <div class="clue-card" id="ch1-nulls" onclick="openModal('modal-nulls')">
+    <div class="pushpin"></div>
+    <h3>LEAD 04 // MISSING EVIDENCE</h3>
+    <p class="card-lead"><strong>19,045 Null Revenues.</strong></p>
+    <p>19,045 missing revenue figures, and 7,664 missing unit prices. Crucial sales records simply gone.</p>
+    <div class="badge">Trace Data</div>
+  </div>
+
+  <!-- Lead 05: Disappearing Naira -->
+  <div class="clue-card lined-paper" id="ch1-revenue" onclick="openModal('modal-revenue')">
+    <div class="pushpin"></div>
+    <h3>LEAD 05 // DISAPPEARING NAIRA</h3>
+    <p class="card-lead"><strong>14,447 Revenue Mismatches.</strong></p>
+    <p>Total Revenue does not equal Units Sold multiplied by Unit Price. The math fails across millions in sales.</p>
+    <div class="badge">Trace Data</div>
+  </div>
+
+  <!-- Mr. Tunde: Primary Suspect Polaroid -->
+  <div class="polaroid-card" id="ch1-tunde" onclick="openModal('modal-tunde')">
+    <div class="pushpin blue"></div>
+    <div class="polaroid-photo">
+      <img src="mr_tunde.png" alt="Mr. Tunde — Person of Interest">
+    </div>
+    <h4>MR. TUNDE</h4>
+    <div class="poi-label">Primary Suspect</div>
+    <p class="poi-desc">Last person to handle the 150k sales ledger. Went on abrupt medical leave before audit.</p>
+  </div>
+
+  <!-- Offer Letter Card -->
+  <div class="offer-card" id="ch1-offer" onclick="openModal('modal-offer')">
+    <div class="paperclip"></div>
+    <div class="pushpin silver"></div>
+    <div class="letter-header">
+      GRIDVIEW ANALYTICS<br>
+      <span style="font-size: 5px;">Lekki Phase I, Lagos</span>
+    </div>
+    <div class="letter-body">
+      <strong>OFFER OF ENGAGEMENT</strong><br>
+      Candidate: Semilore James<br>
+      Role: Junior BI Analyst<br>
+      Commencement: June 2026<br><br>
+      <em>"...You are assigned to the Palmridge Consumer Products sales audit engagement. Report all discrepancies directly to the PM..."</em>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODALS
+     ============================================================ -->
+
+<!-- Modal 1: Date Obfuscation -->
+<div class="modal-overlay" id="modal-dates">
+  <div class="modal-container">
+    <button class="modal-close-btn" onclick="closeModal('modal-dates')">X</button>
+    <h2 class="modal-title">LEAD 01 // TIME OBFUSCATION DETECTED</h2>
+    <svg class="flowchart-svg">
+      <g class="anim-node"><rect class="node-rect danger" x="20" y="110" width="180" height="60"/><text x="30" y="135" font-weight="bold">14,519 Broken Dates</text><text x="30" y="152">Mixed formats &amp; serials</text></g>
+      <g class="anim-node"><rect class="node-rect" x="280" y="110" width="190" height="60"/><text x="290" y="135" font-weight="bold">Sabotage or Ignorance?</text><text x="290" y="152">Quarters contradicted month</text></g>
+      <g class="anim-node"><rect class="node-rect success" x="540" y="110" width="180" height="60"/><text x="550" y="135" font-weight="bold">The Resolution</text><text x="550" y="152">Standardized via formulas</text></g>
+      <path class="flow-path anim-node" d="M 200 140 L 280 140"/>
+      <path class="flow-path anim-node" d="M 470 140 L 540 140"/>
+    </svg>
+    <div class="modal-text">
+      <p><strong>The Breakdown:</strong> Auditing the <code>sale_date</code> column revealed absolute chaos. Three distinct date formats in play: <code>DD/MM/YYYY</code>, <code>YYYY-MM-DD</code>, and raw Excel serial integers (like <code>44607</code>). Standard time reports were broken.</p>
+      <p style="margin-top:10px"><strong>The Sabotage Clue:</strong> More alarmingly, <strong>12,400 rows</strong> had quarter values (like Q2) that contradicted the actual transaction month (e.g. July = Q3). If dates were deliberately mixed up, it would disguise weak sales quarters.</p>
+      <p style="margin-top:10px"><strong>The Solution:</strong> Constructed Excel formulas using <code>DATE</code>, <code>LEFT</code>, <code>MID</code>, and <code>RIGHT</code> to parse serial numbers and standard formats, then derived clean, correct quarter flags.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 2: Region Splitting -->
+<div class="modal-overlay" id="modal-regions">
+  <div class="modal-container">
+    <button class="modal-close-btn" onclick="closeModal('modal-regions')">X</button>
+    <h2 class="modal-title">LEAD 02 // GEOGRAPHIC SPLIT DETECTED</h2>
+    <svg class="flowchart-svg">
+      <g class="anim-node"><rect class="node-rect danger" x="20" y="110" width="180" height="60"/><text x="30" y="135" font-weight="bold">14 Region Variants</text><text x="30" y="152">North Central, NC, NW, etc.</text></g>
+      <g class="anim-node"><rect class="node-rect" x="280" y="110" width="190" height="60"/><text x="290" y="135" font-weight="bold">Sabotage or Ignorance?</text><text x="290" y="152">Inability to track area sales</text></g>
+      <g class="anim-node"><rect class="node-rect success" x="540" y="110" width="180" height="60"/><text x="550" y="135" font-weight="bold">The Resolution</text><text x="550" y="152">Standardized mapping table</text></g>
+      <path class="flow-path anim-node" d="M 200 140 L 280 140"/>
+      <path class="flow-path anim-node" d="M 470 140 L 540 140"/>
+    </svg>
+    <div class="modal-text">
+      <p><strong>The Breakdown:</strong> The <code>region</code> column was splintered. What should have been 6 standard regions was written in 14 different ways. The North-West alone appeared as <code>NW</code>, <code>North West</code>, <code>NORTH WEST</code>, and <code>north west</code>.</p>
+      <p style="margin-top:10px"><strong>The Sabotage Clue:</strong> Splitting regions masks distributor performance. Sales totals get divided, preventing managers from spotting when a specific territory is drastically underperforming.</p>
+      <p style="margin-top:10px"><strong>The Solution:</strong> Built a clean mapping table and used nested <code>IFS</code> and <code>UPPER</code> checks to clean all 1,622 messy region rows into uniform boundaries.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 3: Promo Disguises -->
+<div class="modal-overlay" id="modal-promo">
+  <div class="modal-container">
+    <button class="modal-close-btn" onclick="closeModal('modal-promo')">X</button>
+    <h2 class="modal-title">LEAD 03 // PROMOTIONAL BLIND SPOT</h2>
+    <svg class="flowchart-svg">
+      <g class="anim-node"><rect class="node-rect danger" x="20" y="110" width="180" height="60"/><text x="30" y="135" font-weight="bold">13 Different Flags</text><text x="30" y="152">yes, Y, 1, True, No, N, 0</text></g>
+      <g class="anim-node"><rect class="node-rect" x="280" y="110" width="190" height="60"/><text x="290" y="135" font-weight="bold">Sabotage or Ignorance?</text><text x="290" y="152">Hiding undocumented discounts</text></g>
+      <g class="anim-node"><rect class="node-rect success" x="540" y="110" width="180" height="60"/><text x="550" y="135" font-weight="bold">The Resolution</text><text x="550" y="152">Unified to TRUE/FALSE flags</text></g>
+      <path class="flow-path anim-node" d="M 200 140 L 280 140"/>
+      <path class="flow-path anim-node" d="M 470 140 L 540 140"/>
+    </svg>
+    <div class="modal-text">
+      <p><strong>The Breakdown:</strong> The promo indicator column was flooded with variants. A promo applied was <code>Yes</code>, <code>YES</code>, <code>yes</code>, <code>Y</code>, <code>1</code>, and <code>True</code>. No promo was <code>No</code>, <code>NO</code>, <code>N</code>, <code>0</code>, and <code>False</code>. Plus <strong>13,094 rows</strong> left blank.</p>
+      <p style="margin-top:10px"><strong>The Sabotage Clue:</strong> Bypassing standardized promo flags allows sales reps to issue unauthorized or hidden discounts, labeling them randomly so they escape audit checks.</p>
+      <p style="margin-top:10px"><strong>The Solution:</strong> Cleaned all promo variants using logical Excel sweeps, mapping everything to a strict binary <code>1</code> or <code>0</code> indicator.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 4: Missing Evidence -->
+<div class="modal-overlay" id="modal-nulls">
+  <div class="modal-container">
+    <button class="modal-close-btn" onclick="closeModal('modal-nulls')">X</button>
+    <h2 class="modal-title">LEAD 04 // MISSING EVIDENCE</h2>
+    <svg class="flowchart-svg">
+      <g class="anim-node"><rect class="node-rect danger" x="20" y="110" width="180" height="60"/><text x="30" y="135" font-weight="bold">19,045 Null Revenues</text><text x="30" y="152">Empty unit prices &amp; totals</text></g>
+      <g class="anim-node"><rect class="node-rect" x="280" y="110" width="190" height="60"/><text x="290" y="135" font-weight="bold">Sabotage or Ignorance?</text><text x="290" y="152">Hiding unrecorded sales</text></g>
+      <g class="anim-node"><rect class="node-rect success" x="540" y="110" width="180" height="60"/><text x="550" y="135" font-weight="bold">The Resolution</text><text x="550" y="152">Recalculated from master list</text></g>
+      <path class="flow-path anim-node" d="M 200 140 L 280 140"/>
+      <path class="flow-path anim-node" d="M 470 140 L 540 140"/>
+    </svg>
+    <div class="modal-text">
+      <p><strong>The Breakdown:</strong> Major gaps in key financial fields. <strong>19,045 rows</strong> lacked a Total Revenue entry, and <strong>7,664 rows</strong> lacked a Unit Price. Without these, total sales volume was heavily understated.</p>
+      <p style="margin-top:10px"><strong>The Sabotage Clue:</strong> Blanks in revenue allow cash transactions to walk out the door. If a transaction occurred but the revenue was deleted, it's impossible to balance bank sheets against inventory depletion.</p>
+      <p style="margin-top:10px"><strong>The Solution:</strong> Cross-referenced product SKUs against a master price sheet to populate missing unit prices, then computed missing revenue values mathematically.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 5: Disappearing Naira -->
+<div class="modal-overlay" id="modal-revenue">
+  <div class="modal-container">
+    <button class="modal-close-btn" onclick="closeModal('modal-revenue')">X</button>
+    <h2 class="modal-title">LEAD 05 // THE DISAPPEARING NAIRA</h2>
+    <svg class="flowchart-svg">
+      <g class="anim-node"><rect class="node-rect danger" x="20" y="110" width="180" height="60"/><text x="30" y="135" font-weight="bold">14,447 Calc Mismatches</text><text x="30" y="152">Revenue != Sold x Price</text></g>
+      <g class="anim-node"><rect class="node-rect" x="280" y="110" width="190" height="60"/><text x="290" y="135" font-weight="bold">Sabotage or Ignorance?</text><text x="290" y="152">Active ledger manipulation</text></g>
+      <g class="anim-node"><rect class="node-rect success" x="540" y="110" width="180" height="60"/><text x="550" y="135" font-weight="bold">The Resolution</text><text x="550" y="152">Re-calculated clean revenue</text></g>
+      <path class="flow-path anim-node" d="M 200 140 L 280 140"/>
+      <path class="flow-path anim-node" d="M 470 140 L 540 140"/>
+    </svg>
+    <div class="modal-text">
+      <p><strong>The Breakdown:</strong> The most damning finding. In <strong>14,447 rows</strong>, the recorded <code>total_revenue_naira</code> did not equal <code>units_sold × unit_price_naira</code>. The variance spanned millions of Naira.</p>
+      <p style="margin-top:10px"><strong>The Sabotage Clue:</strong> This is a classic indicator of double-entry manipulation. Someone was overriding revenue formulas, potentially to report false performance figures or cover up inventory shrinkage.</p>
+      <p style="margin-top:10px"><strong>The Solution:</strong> Wrote automated Excel verification checks to isolate mismatching rows and computed the true expected revenue for the audit report.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 6: Mr. Tunde POI -->
+<div class="modal-overlay" id="modal-tunde">
+  <div class="modal-container">
+    <button class="modal-close-btn" onclick="closeModal('modal-tunde')">X</button>
+    <h2 class="modal-title">SUSPECT DOSSIER // MR. TUNDE</h2>
+    <div class="modal-text">
+      <div style="display:flex; gap:20px; margin-bottom:16px; flex-wrap:wrap;">
+        <img src="mr_tunde.png" alt="Mr. Tunde" style="width:140px; height:140px; object-fit:cover; border:3px solid #332211; filter:contrast(1.1) saturate(0.8);">
+        <div>
+          <p><strong>Role:</strong> Senior Commercial Analyst, Palmridge Account Lead</p>
+          <p style="margin-top:6px"><strong>Status:</strong> <span style="color:#cc8800; font-weight:bold;">PRIMARY SUSPECT</span></p>
+          <p style="margin-top:6px"><strong>Last Known Activity:</strong> Emergency medical leave — 2 weeks before scheduled audit</p>
+        </div>
+      </div>
+      <p><strong>The Profile:</strong> Mr. Tunde was the sole custodian of the Palmridge sales sheet for the last two years. He designed the original reporting structures. Two weeks before the annual audit was scheduled, he suddenly applied for emergency leave and handed over a raw, un-audited CSV containing 150,000 rows of chaotic records.</p>
+      <p style="margin-top:10px"><strong>Why He's Flagged:</strong></p>
+      <ul style="margin-left:20px; margin-top:5px;">
+        <li style="margin-top:5px">He signed off on monthly sales reports showing 100% data integrity, yet the underlying ledger is full of mathematical mismatches.</li>
+        <li style="margin-top:5px">He was the last user to access and save the CSV before the system logged a bulk database edit.</li>
+        <li style="margin-top:5px">Multiple sales reps claim they reported region and discount discrepancies to him, but none of these reports were ever logged or resolved.</li>
+      </ul>
+      <p style="margin-top:15px"><strong>Investigation Verdict:</strong> Suspicious. Either he is hiding massive operational negligence, or he was actively cooperating with external parties to misreport sales performance. <em>Investigation remains open.</em></p>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 7: Offer Letter -->
+<div class="modal-overlay" id="modal-offer">
+  <div class="modal-container" style="width:550px;">
+    <button class="modal-close-btn" onclick="closeModal('modal-offer')">X</button>
+    <h2 class="modal-title">GRIDVIEW ANALYTICS // LETTER OF HIRING</h2>
+    <div style="text-align:center; margin-bottom:20px;">
+      <img src="../../gridview_analytics/offer letter.png" alt="Offer Letter" style="max-width:100%; border:1px solid #ccc; box-shadow:0 4px 10px rgba(0,0,0,0.2);">
+    </div>
+    <div class="modal-text">
+      <p>The official offer of engagement sent to Semilore James in June 2026. What was supposed to be a routine initial data cleansing task on Palmridge Consumer Products' sales ledger quickly evolved into a full-scale corporate investigation.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---- MODAL SYSTEM ----
+function openModal(id) {
+  const modal = document.getElementById(id);
+  if (!modal) return;
+  modal.classList.add('active');
+  const nodes = modal.querySelectorAll('.anim-node');
+  nodes.forEach((node, idx) => {
+    setTimeout(() => node.classList.add('show'), idx * 350);
+  });
+}
+
+function closeModal(id) {
+  const modal = document.getElementById(id);
+  if (!modal) return;
+  modal.classList.remove('active');
+  modal.querySelectorAll('.anim-node').forEach(n => n.classList.remove('show'));
+}
+
+// Close modals on overlay click
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('modal-overlay')) {
+    e.target.classList.remove('active');
+    e.target.querySelectorAll('.anim-node').forEach(n => n.classList.remove('show'));
+  }
+});
+
+// ---- PIN COORDINATE HELPERS ----
+function getPinCenter(el) {
+  const rect = el.getBoundingClientRect();
+  const board = el.closest('.corkboard');
+  const boardRect = board.getBoundingClientRect();
+  return {
+    x: rect.left + rect.width / 2 - boardRect.left + board.scrollLeft,
+    y: rect.top + rect.height / 2 - boardRect.top + board.scrollTop
+  };
+}
+
+// ---- RED STRING CONNECTIONS ----
+function drawChapterStrings() {
+  const overlay = document.getElementById('ch1-strings');
+  const svgNS = "http://www.w3.org/2000/svg";
+  while (overlay.firstChild) overlay.removeChild(overlay.firstChild);
+
+  // Add drop shadow filter
+  const defs = document.createElementNS(svgNS, 'defs');
+  const filter = document.createElementNS(svgNS, 'filter');
+  filter.setAttribute('id', 'stringShadow');
+  filter.innerHTML = '<feDropShadow dx="1" dy="3" stdDeviation="2" flood-opacity="0.5"/>';
+  defs.appendChild(filter);
+  overlay.appendChild(defs);
+
+  const tundePin = document.querySelector('#ch1-tunde .pushpin');
+  if (!tundePin) return;
+  const tPoint = getPinCenter(tundePin);
+
+  const cards = document.querySelectorAll('#chapter-1 .clue-card, #ch1-offer');
+  cards.forEach(card => {
+    const pin = card.querySelector('.pushpin');
+    if (!pin) return;
+    const cPoint = getPinCenter(pin);
+
+    const path = document.createElementNS(svgNS, 'path');
+    const midX = (cPoint.x + tPoint.x) / 2;
+    const midY = (cPoint.y + tPoint.y) / 2 + 35;
+    path.setAttribute('d', `M ${cPoint.x} ${cPoint.y} Q ${midX} ${midY} ${tPoint.x} ${tPoint.y}`);
+    path.setAttribute('stroke', '#cc0000');
+    path.setAttribute('stroke-width', '2.5');
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke-linecap', 'round');
+    path.setAttribute('filter', 'url(#stringShadow)');
+    overlay.appendChild(path);
+  });
+}
+
+// Initial draw and update on resize
+window.addEventListener('load', () => {
+  drawChapterStrings();
+  setTimeout(drawChapterStrings, 300);
+});
+window.addEventListener('resize', drawChapterStrings);
+
+// ESC key listener to close modals
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const openModal = document.querySelector('.modal-overlay.active');
+    if (openModal) {
+      openModal.classList.remove('active');
+      openModal.querySelectorAll('.anim-node').forEach(n => n.classList.remove('show'));
+    }
+  }
+});
+</script>
+</body>
+</html>

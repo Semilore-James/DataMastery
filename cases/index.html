@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE CASE FILES — SEMILORE JAMES</title>
+<meta name="description" content="The Case Files: A detective-themed data analytics portfolio by Semilore James. Each project is a case. Each finding is a clue.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<style>
+/* ========== RESET & BASE SYSTEM ========== */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Courier Prime', monospace;
+  background-color: #1c130e;
+  color: #222;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  user-select: none;
+}
+
+/* ========== CORKBOARD BACKGROUND ========== */
+.corkboard {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background-color: #38251a;
+  background-image: 
+    radial-gradient(circle at 50% 50%, transparent 60%, rgba(0,0,0,0.4)),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 250 250' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='cf'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.28 0 0 0 0 0.18 0 0 0 0 0.12 0 0 0 0.16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23cf)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  box-shadow: inset 0 0 100px rgba(0,0,0,0.8);
+  overflow: auto;
+}
+
+/* Wood frame */
+.corkboard::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 16px solid #23160f;
+  border-image: linear-gradient(to bottom, #2b1d14, #1b0e07) 16;
+  pointer-events: none;
+  z-index: 100;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
+}
+
+/* ========== TOP STATUS BAR ========== */
+.top-bar {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  height: 42px;
+  background-color: #111;
+  color: #00ff66;
+  border-bottom: 2px solid #222;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  font-family: 'Special Elite', system-ui;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  z-index: 90;
+}
+
+/* ========== EVIDENCE WALL (HUB) ========== */
+.wall-title {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 20;
+  pointer-events: none;
+}
+.wall-title h1 {
+  font-family: 'Special Elite', system-ui;
+  font-size: 2.4rem;
+  color: #f5f0e8;
+  text-shadow: 2px 4px 8px rgba(0,0,0,0.7);
+  letter-spacing: 6px;
+}
+.wall-title p {
+  font-family: 'Courier Prime', monospace;
+  font-size: 0.8rem;
+  color: #aa9977;
+  margin-top: 6px;
+  letter-spacing: 3px;
+}
+
+/* ========== CASE FOLDER CARDS (HUB) ========== */
+.case-folder {
+  position: absolute;
+  width: 320px;
+  cursor: pointer;
+  z-index: 20;
+  text-decoration: none;
+  display: block;
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.case-folder:hover {
+  transform: scale(1.04) rotate(0deg) !important;
+  z-index: 50;
+}
+
+.folder-tab {
+  background: #c4a56e;
+  width: 140px;
+  height: 22px;
+  border-radius: 6px 6px 0 0;
+  margin-left: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Special Elite', system-ui;
+  font-size: 0.6rem;
+  color: #3a2a1a;
+  letter-spacing: 1px;
+  box-shadow: 0 -2px 4px rgba(0,0,0,0.2);
+}
+
+.folder-body {
+  background: linear-gradient(135deg, #d4a862, #c49a52);
+  border: 1px solid #a07830;
+  box-shadow: 4px 8px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15);
+  padding: 24px 20px 20px;
+  position: relative;
+}
+
+.folder-body::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #b08840, #e0c070, #b08840);
+}
+
+.folder-body h3 {
+  font-family: 'Special Elite', system-ui;
+  font-size: 1.1rem;
+  color: #2a1a0a;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+.folder-subtitle {
+  font-size: 0.75rem;
+  color: #4a3a2a;
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+.folder-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.65rem;
+  color: #5a4a3a;
+  border-top: 1px dashed #a07830;
+  padding-top: 8px;
+}
+.folder-status {
+  font-family: 'Special Elite', system-ui;
+  font-weight: bold;
+  padding: 2px 8px;
+  border: 1.5px solid;
+  font-size: 0.6rem;
+  letter-spacing: 1px;
+}
+.folder-status.open { color: #cc8800; border-color: #cc8800; }
+.folder-status.locked { color: #777; border-color: #777; }
+
+/* Pushpin for folders */
+.folder-pin {
+  position: absolute;
+  top: -8px;
+  right: 30px;
+  width: 16px;
+  height: 16px;
+  background: #cc0000;
+  border-radius: 50%;
+  box-shadow: 1px 3px 6px rgba(0,0,0,0.6);
+  z-index: 30;
+}
+.folder-pin::after {
+  content: '';
+  width: 5px; height: 5px;
+  background: rgba(255,255,255,0.7);
+  border-radius: 50%;
+  position: absolute;
+  top: 3px; left: 3px;
+}
+
+/* Locked/coming-soon folders */
+.case-folder.locked {
+  opacity: 0.45;
+  cursor: default;
+  filter: grayscale(0.4);
+  pointer-events: none;
+}
+.case-folder.locked:hover {
+  transform: none !important;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 900px) {
+  .case-folder { width: 260px; }
+  .wall-title h1 { font-size: 1.6rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="corkboard" id="evidence-wall">
+  
+  <!-- Status Bar -->
+  <div class="top-bar">
+    <div>THE CASE FILES — SEMILORE JAMES</div>
+    <div style="font-size:0.7rem; color:#00ff6688;">DATA ANALYST // DETECTIVE</div>
+  </div>
+
+  <!-- Wall Title -->
+  <div class="wall-title">
+    <h1>THE CASE FILES</h1>
+    <p>SELECT A CASE TO INVESTIGATE</p>
+  </div>
+
+  <!-- Case Folder 01: Palmridge (ACTIVE) -->
+  <a class="case-folder" id="folder-01" style="top: 36%; left: 8%; transform: rotate(-1.5deg);" href="./case-01-the-palmridge-problem/index.html">
+    <div class="folder-pin"></div>
+    <div class="folder-tab">CASE NO. 001</div>
+    <div class="folder-body">
+      <h3>THE PALMRIDGE PROBLEM</h3>
+      <p class="folder-subtitle">150,000 rows of sales data. 5 categories of corruption. One primary suspect. The numbers didn't add up — and someone didn't want them to.</p>
+      <div class="folder-meta">
+        <span>GridView Analytics · Excel</span>
+        <span class="folder-status open">OPEN</span>
+      </div>
+    </div>
+  </a>
+
+  <!-- Case Folder 02: Locked -->
+  <div class="case-folder locked" id="folder-02" style="top: 30%; left: 52%; transform: rotate(2deg);">
+    <div class="folder-pin" style="background:#777;"></div>
+    <div class="folder-tab" style="background:#9a9a8a;">CASE NO. 002</div>
+    <div class="folder-body" style="background: linear-gradient(135deg, #9a9a8a, #8a8a7a);">
+      <h3>[ CLASSIFIED ]</h3>
+      <p class="folder-subtitle">Awaiting assignment. The next employer engagement will open this file.</p>
+      <div class="folder-meta">
+        <span>Syntax Systems Ltd · SQL</span>
+        <span class="folder-status locked">LOCKED</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Case Folder 03: Locked -->
+  <div class="case-folder locked" id="folder-03" style="top: 58%; left: 36%; transform: rotate(-0.5deg);">
+    <div class="folder-pin" style="background:#777;"></div>
+    <div class="folder-tab" style="background:#9a9a8a;">CASE NO. 003</div>
+    <div class="folder-body" style="background: linear-gradient(135deg, #9a9a8a, #8a8a7a);">
+      <h3>[ CLASSIFIED ]</h3>
+      <p class="folder-subtitle">Case file sealed pending completion of prior engagements.</p>
+      <div class="folder-meta">
+        <span>LucasFrame Studios · Sheets</span>
+        <span class="folder-status locked">LOCKED</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Case Folder 04: Locked -->
+  <div class="case-folder locked" id="folder-04" style="top: 56%; left: 68%; transform: rotate(1deg);">
+    <div class="folder-pin" style="background:#777;"></div>
+    <div class="folder-tab" style="background:#9a9a8a;">CASE NO. 004</div>
+    <div class="folder-body" style="background: linear-gradient(135deg, #9a9a8a, #8a8a7a);">
+      <h3>[ CLASSIFIED ]</h3>
+      <p class="folder-subtitle">Access restricted. Final engagement files not yet generated.</p>
+      <div class="folder-meta">
+        <span>Northfield Learning · Python</span>
+        <span class="folder-status locked">LOCKED</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
