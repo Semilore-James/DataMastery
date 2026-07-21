@@ -3,7 +3,7 @@ import numpy as np
 from datetime import datetime
 
 # Input and output file paths
-INPUT_PATH = "palmridge_sales_cleaned.csv"
+INPUT_PATH = "palmridge_sales_raw.csv"
 OUTPUT_PATH = "palmridge_sales_cleaned.csv"
 
 def clean_currency(val):
