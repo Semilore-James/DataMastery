@@ -3,8 +3,8 @@ import numpy as np
 from datetime import datetime
 
 # Input and output file paths
-INPUT_PATH = r"c:\Users\Morpheus\Data_Analytics\DataMastery\gridview_analytics\palmridge_sales_raw.csv"
-OUTPUT_PATH = r"c:\Users\Morpheus\Data_Analytics\DataMastery\gridview_analytics\palmridge_sales_cleaned.csv"
+INPUT_PATH = "palmridge_sales_cleaned.csv"
+OUTPUT_PATH = "palmridge_sales_cleaned.csv"
 
 def clean_currency(val):
     if pd.isna(val) or not isinstance(val, str):
