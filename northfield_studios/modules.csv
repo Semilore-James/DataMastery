@@ -1,0 +1,51 @@
+module_code,module_name,department,credit_hours,pass_mark,semester
+CS101,Intro to Programming,Computer Science,2,45,First
+CS201,Data Structures,Computer Science,3,45,First
+CS301,Algorithms,Computer Science,2,45,Second
+CS401,Machine Learning,Computer Science,3,40,First
+CS501,Advanced AI,Computer Science,2,45,Second
+DS101,Python for Data,Data Science,4,40,First
+DS201,Statistics Fundamentals,Data Science,2,45,First
+DS301,Data Wrangling,Data Science,4,45,First
+DS401,Predictive Modelling,Data Science,2,45,Second
+DS501,Big Data,Data Science,2,40,First
+EC101,Microeconomics,Economics,4,40,First
+EC201,Macroeconomics,Economics,2,45,Second
+EC301,Econometrics,Economics,4,45,Second
+EC401,Development Econ,Economics,3,40,Second
+EC501,Financial Econ,Economics,3,50,Second
+EE101,Circuit Theory,Electrical Engineering,2,50,Second
+EE201,Electronics,Electrical Engineering,2,45,Second
+EE301,Power Systems,Electrical Engineering,4,50,Second
+EE401,VLSI Design,Electrical Engineering,4,50,Second
+EE501,Renewable Energy,Electrical Engineering,3,50,First
+EN101,Mechanics,General Studies,4,40,First
+EN201,Thermodynamics,General Studies,3,50,Second
+EN301,Control Systems,General Studies,2,45,Second
+EN401,Signal Processing,General Studies,4,45,First
+EN501,Robotics,General Studies,4,45,Second
+IT101,Networking Basics,General Studies,4,45,First
+IT201,Database Design,General Studies,2,50,First
+IT301,Cybersecurity,General Studies,4,45,First
+IT401,Cloud Computing,General Studies,3,40,Second
+IT501,DevOps,General Studies,4,50,First
+ME101,Statics,Mechanical Engineering,4,45,Second
+ME201,Dynamics,Mechanical Engineering,4,50,First
+ME301,Fluid Mechanics,Mechanical Engineering,4,45,First
+ME401,Heat Transfer,Mechanical Engineering,2,50,Second
+ME501,Manufacturing,Mechanical Engineering,3,45,First
+MT101,Calculus,Mathematics,2,40,Second
+MT201,Linear Algebra,Mathematics,2,40,Second
+MT301,Discrete Math,Mathematics,3,50,Second
+MT401,Numerical Methods,Mathematics,3,50,Second
+MT501,Topology,Mathematics,2,40,First
+PH101,Classical Mechanics,General Studies,4,45,First
+PH201,Electromagnetism,General Studies,2,45,First
+PH301,Quantum Mechanics,General Studies,4,45,First
+PH401,Astrophysics,General Studies,4,50,Second
+PH501,Particle Physics,General Studies,2,45,Second
+ST101,Probability Theory,Statistics,3,40,Second
+ST201,Inference,Statistics,3,45,First
+ST301,Regression,Statistics,4,50,First
+ST401,Time Series,Statistics,3,40,First
+ST501,Bayesian Methods,Statistics,3,50,First

@@ -1,0 +1,56 @@
+vehicle_id,vehicle_type,plate_number,capacity_kg
+1,Van,A859-KN,400
+2,Motorcycle,C854-LG,15
+3,Van,B704-RV,400
+4,Motorcycle,B323-AB,15
+5,Van,A674-AB,400
+6,Tricycle,G325-RV,60
+7,Van,A877-AB,400
+8,Van,F384-AB,400
+9,Motorcycle,F204-LG,15
+10,Motorcycle,F967-KN,15
+11,Van,A847-RV,400
+12,Van,G180-KN,400
+13,Tricycle,F691-AB,60
+14,Tricycle,A777-AB,60
+15,Tricycle,B975-AB,60
+16,Pickup Truck,G384-RV,600
+17,Van,F266-KN,400
+18,Motorcycle,E818-LG,15
+19,Van,C646-AB,400
+20,Motorcycle,G376-AB,15
+21,Van,A334-LG,400
+22,Tricycle,G374-LG,60
+23,Motorcycle,F317-RV,15
+24,Motorcycle,H246-KN,15
+25,Motorcycle,E864-RV,15
+26,Pickup Truck,G470-AB,600
+27,Small Truck,C621-RV,1200
+28,Motorcycle,A981-LG,15
+29,Motorcycle,C911-RV,15
+30,Van,G490-RV,400
+31,Van,A796-LG,400
+32,Van,E887-KN,400
+33,Motorcycle,G261-RV,15
+34,Motorcycle,E612-AB,15
+35,Van,B991-KN,400
+36,Tricycle,D256-KN,60
+37,Tricycle,A713-KN,60
+38,Van,B471-KN,400
+39,Motorcycle,D999-LG,15
+40,Motorcycle,H935-LG,15
+41,Small Truck,C231-RV,1200
+42,Pickup Truck,C371-RV,600
+43,Small Truck,D830-KN,1200
+44,Motorcycle,F548-RV,15
+45,Motorcycle,D165-KN,15
+46,Motorcycle,D702-AB,15
+47,Motorcycle,A334-LG,15
+48,Pickup Truck,F172-AB,600
+49,Motorcycle,H319-AB,15
+50,Tricycle,H348-RV,60
+51,Tricycle,D196-LG,60
+52,Van,F533-RV,400
+53,Van,A789-LG,400
+54,Motorcycle,F919-LG,15
+55,Motorcycle,D649-RV,15

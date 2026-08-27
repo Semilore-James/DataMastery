@@ -226,7 +226,7 @@ Never mark **Done** until the file exists on GitHub. Understanding something is 
 At the end of each company engagement, your PM runs a score review. This involves:
 1. Reading your GitHub repo for every submitted file
 2. Checking Notion for your task completion history and daily logs
-3. Scoring 8 dimensions out of 10 each (total: /80)
+3. Scoring 8 dimensions out of 10 each (total: /80) — the same eight-dimension skeleton across all four companies, worded to that company's tools. See PM_SKILL.md for the exact per-company wording; a Distinction means the same thing everywhere.
 4. Writing a written PM assessment
 5. Revealing hidden objectives and marking whether you met them
 

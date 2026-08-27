@@ -92,17 +92,22 @@ When assigning new tasks verbally in chat, use the same tone.
 
 ## SCORING SYSTEM
 
-At the end of each engagement, score 8 dimensions out of 10 (total /80):
+At the end of each engagement, score 8 dimensions out of 10 (total /80). All four companies share the same eight-dimension skeleton, worded to that company's actual tools — dimensions 1, 2, 3, 4, 7, and 8 are structurally identical across every company. That's what makes a Distinction at Syntax Systems mean the same thing as a Distinction at Northfield. Dimension 5 (Escalation) and dimension 6 (Specialization) are the two slots where each company's actual discipline shows up.
 
-**Syntax Systems:** Schema design, SQL correctness, code quality, documentation, business framing, escalation behaviour, portfolio quality, consistency.
+| # | Dimension | Syntax Systems | GridView Analytics | LucasFrame Studios | Northfield |
+|---|---|---|---|---|---|
+| 1 | Technical Correctness | SQL correctness | Audit & formula correctness | Ops analysis & formula correctness | Pipeline & pandas correctness |
+| 2 | Code/Formula Discipline | Code quality | No hardcoding | ARRAYFORMULA use, no hardcoding | Function design, no copy-pasted cleaning |
+| 3 | Documentation | Comment ratio + business question per query | Data quality memo | Investigation report + case study clarity | Docstrings + README |
+| 4 | Business Framing | Do queries answer real questions, not just demonstrate syntax | Do formulas/dashboards answer real questions | Does the PRD/roadmap trace back to the actual finding, not a hypothetical | Findings stated with exact numbers, not vague phrases |
+| 5 | Escalation Behaviour | Argues both sides before concluding (the fraud investigation report) | Pushes past the obvious ask when a number doesn't add up | Investigation report argues fraud vs. honest reporting gap before concluding | Investigation report argues both sides before concluding |
+| 6 | Specialization | Schema design | Power BI / DAX model | **Product Management craft** — PRD clarity, RICE reasoning defensibility, metrics-defined-before-build discipline | **Statistical rigor** — significance testing, sample-size awareness, confidence stated not implied |
+| 7 | Portfolio Quality | as above | as above | as above | as above |
+| 8 | Consistency | File naming, professional habits, honesty about limitations | as above | as above | as above |
 
-**GridView Analytics:** Audit quality, formula discipline (no hardcoding), dashboard design, Power BI model, DAX accuracy, documentation (memo), business framing, portfolio quality.
+**Scoring note for LucasFrame specifically:** the engagement now produces two Phase 6 deliverables — the investigation report and the ProdOS case study. Score dimension 5 (Escalation) from the investigation report and dimension 6 (Specialization) from the PRD/roadmap/metrics work in the case study. Don't let a strong case study compensate for a weak investigation report or vice versa — they're testing different things.
 
-**LucasFrame Studios:** Audit completeness, ARRAYFORMULA use, QUERY accuracy, dashboard quality, calculated fields correctness, automation proof, CEO question answered, portfolio quality.
-
-**Northfield:** Pipeline correctness, function design + asserts, pandas fluency, visualisation quality, OOP implementation, error handling, findings specificity, limitations section present.
-
-Grades: 72–80 Distinction / 60–71 Merit / 48–59 Pass / Below 48 Refer.
+Grades: 72–80 Distinction / 60–71 Merit / 48–59 Pass / Below 48 Refer — same bands for every company.
 
 ---
 

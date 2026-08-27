@@ -1,0 +1,16 @@
+location_id,location_name,city_alias,state,day_rate_naira
+LOC01,Lekki Phase 1 Studio,Lekki,Lagos,180000
+LOC02,Victoria Island Backlot,VI,Lagos,250000
+LOC03,Ikoyi Waterside House,Ikoyi,Lagos,300000
+LOC04,Yaba Tech Campus,Yaba,Lagos,90000
+LOC05,Surulere Community Hall,Surulere,Lagos,60000
+LOC06,Ajah Warehouse Set,Ajah,Lagos,120000
+LOC07,Lagos Mainland Market Street,Lagos Mainland,Lagos,70000
+LOC08,Abuja Central Studio,Abuja,FCT,220000
+LOC09,Port Harcourt Waterfront,Port Harcourt,Rivers,200000
+LOC10,Ibadan Heritage House,Ibadan,Oyo,85000
+LOC11,Enugu Hillside Set,Enugu,Enugu,95000
+LOC12,Calabar Riverside,Calabar,Cross River,110000
+LOC13,Epe Countryside Location,Epe,Lagos,75000
+LOC14,Badagry Heritage Site,Badagry,Lagos,65000
+LOC15,Magodo Residential Set,Magodo,Lagos,130000

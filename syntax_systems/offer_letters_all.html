@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Offer Letters — The Semilore James Simulation</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --syntax-bg:#0b0f0e;
+  --syntax-paper:#f2ede4;
+  --syntax-ink:#111410;
+  --syntax-accent:#2d6a4f;
+  --syntax-gold:#a3996a;
+  --syntax-rule:#c8c2b2;
+  --syntax-muted:#7a7464;
+
+  --grid-bg:#0e0e16;
+  --grid-paper:#f0f2f7;
+  --grid-ink:#0d0e1a;
+  --grid-accent:#2b4bde;
+  --grid-gold:#e8b84b;
+  --grid-rule:#bfc4d6;
+  --grid-muted:#6e728a;
+
+  --lucas-bg:#110a05;
+  --lucas-paper:#faf4ee;
+  --lucas-ink:#1a0f08;
+  --lucas-accent:#c1440e;
+  --lucas-gold:#d4965a;
+  --lucas-rule:#d4c4b5;
+  --lucas-muted:#7a6555;
+
+  --north-bg:#050d12;
+  --north-paper:#eef4f7;
+  --north-ink:#071018;
+  --north-accent:#1a5f7a;
+  --north-gold:#7ab8cc;
+  --north-rule:#b5cdd6;
+  --north-muted:#4e6e7a;
+}
+
+body{
+  background:#111;
+  font-family:'Inter',sans-serif;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:32px 16px 64px;
+}
+
+/* ── SWITCHER ── */
+.switcher{
+  display:flex;
+  gap:8px;
+  margin-bottom:40px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.sw-btn{
+  padding:8px 20px;
+  border:1px solid #444;
+  background:transparent;
+  color:#aaa;
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:all .2s;
+  border-radius:2px;
+}
+.sw-btn:hover{color:#fff;border-color:#888}
+.sw-btn.active{color:#fff;border-color:#fff;background:rgba(255,255,255,.05)}
+
+/* ── LETTER WRAPPER ── */
+.letter{display:none;width:100%;max-width:740px}
+.letter.visible{display:block}
+
+/* ── PAGE ── */
+.page{
+  padding:72px 80px;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 32px 100px rgba(0,0,0,.7);
+}
+
+/* SYNTAX */
+.letter-syntax .page{background:var(--syntax-paper);color:var(--syntax-ink)}
+.letter-syntax .accent{color:var(--syntax-accent)}
+.letter-syntax .gold{color:var(--syntax-gold)}
+.letter-syntax .rule-color{color:var(--syntax-rule)}
+.letter-syntax .muted{color:var(--syntax-muted)}
+.letter-syntax .divider{border-color:var(--syntax-accent)}
+.letter-syntax .ribbon{background:var(--syntax-ink);color:var(--syntax-gold)}
+.letter-syntax .stamp-border{border-color:var(--syntax-accent);color:var(--syntax-accent)}
+
+/* GRIDVIEW */
+.letter-grid .page{background:var(--grid-paper);color:var(--grid-ink)}
+.letter-grid .accent{color:var(--grid-accent)}
+.letter-grid .gold{color:var(--grid-gold)}
+.letter-grid .muted{color:var(--grid-muted)}
+.letter-grid .divider{border-color:var(--grid-accent)}
+.letter-grid .ribbon{background:var(--grid-ink);color:var(--grid-gold)}
+.letter-grid .stamp-border{border-color:var(--grid-accent);color:var(--grid-accent)}
+
+/* LUCAS */
+.letter-lucas .page{background:var(--lucas-paper);color:var(--lucas-ink)}
+.letter-lucas .accent{color:var(--lucas-accent)}
+.letter-lucas .gold{color:var(--lucas-gold)}
+.letter-lucas .muted{color:var(--lucas-muted)}
+.letter-lucas .divider{border-color:var(--lucas-accent)}
+.letter-lucas .ribbon{background:var(--lucas-ink);color:var(--lucas-gold)}
+.letter-lucas .stamp-border{border-color:var(--lucas-accent);color:var(--lucas-accent)}
+
+/* NORTH */
+.letter-north .page{background:var(--north-paper);color:var(--north-ink)}
+.letter-north .accent{color:var(--north-accent)}
+.letter-north .gold{color:var(--north-gold)}
+.letter-north .muted{color:var(--north-muted)}
+.letter-north .divider{border-color:var(--north-accent)}
+.letter-north .ribbon{background:var(--north-ink);color:var(--north-gold)}
+.letter-north .stamp-border{border-color:var(--north-accent);color:var(--north-accent)}
+
+/* ── WATERMARK ── */
+.watermark{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%) rotate(-28deg);
+  font-family:'JetBrains Mono',monospace;
+  font-size:72px;font-weight:300;
+  letter-spacing:.3em;white-space:nowrap;
+  opacity:.035;pointer-events:none;z-index:0;
+  text-transform:uppercase;
+}
+
+/* ── STAMP ── */
+.stamp{
+  position:absolute;top:56px;right:68px;
+  width:84px;height:84px;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  transform:rotate(14deg);opacity:.3;
+}
+.stamp-border{border:2.5px solid;border-radius:50%;width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.stamp-inner{border:1px solid;border-radius:50%;width:66px;height:66px;display:flex;align-items:center;justify-content:center;text-align:center}
+.stamp-text{font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:.15em;text-transform:uppercase;line-height:1.5}
+
+/* ── CONTENT ── */
+.content{position:relative;z-index:1}
+
+.header{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:24px;margin-bottom:32px}
+.header{border-bottom:1.5px solid}
+
+.co-eyebrow{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.3em;text-transform:uppercase;margin-bottom:4px}
+.co-name{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;line-height:1.1}
+.co-tag{font-size:10px;letter-spacing:.08em;margin-top:3px}
+
+.doc-meta{text-align:right}
+.meta-label{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:2px}
+.meta-val{font-size:12px}
+.meta-ref{font-family:'JetBrains Mono',monospace;font-size:10px;margin-top:6px}
+
+.ribbon{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.3em;text-transform:uppercase;padding:7px 24px;margin:0 -80px 32px;text-align:center}
+
+.salute-date{font-size:11px;margin-bottom:18px}
+.candidate{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;font-style:italic;margin-bottom:18px}
+.opening{font-size:13px;line-height:1.8}
+
+.sec-label{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.3em;text-transform:uppercase;padding-bottom:4px;border-bottom:1px solid;margin-bottom:10px;margin-top:26px}
+
+.terms{width:100%;border-collapse:collapse}
+.terms tr{border-bottom:1px solid}
+.terms tr:last-child{border-bottom:none}
+.terms td{padding:9px 0;font-size:12.5px;vertical-align:top}
+.terms td:first-child{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.05em;width:38%;padding-right:12px;padding-top:11px}
+.terms td.highlight{font-family:'Cormorant Garamond',serif;font-size:16px;font-style:italic;font-weight:500}
+
+.duties{list-style:none;margin-top:4px}
+.duties li{font-size:13px;line-height:1.65;padding:6px 0 6px 18px;position:relative;border-bottom:1px dotted}
+.duties li:last-child{border-bottom:none}
+.duties li::before{content:'›';position:absolute;left:0;font-size:16px;line-height:1.35}
+
+.body-text{font-size:13px;line-height:1.8;margin-bottom:0}
+
+.closing{margin-top:32px;padding-top:24px;border-top:1.5px solid}
+.closing .body-text{margin-bottom:20px}
+.sign-off{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;margin-bottom:44px}
+
+.sigs{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+.sig-field{border-top:1px solid;padding-top:8px}
+.sig-name{font-family:'Cormorant Garamond',serif;font-size:17px;font-style:italic;margin-bottom:2px}
+.sig-title{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;margin-top:2px}
+
+.footer{margin-top:40px;padding-top:14px;border-top:1px solid;display:flex;justify-content:space-between}
+.footer span{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase}
+
+@media(max-width:640px){
+  .page{padding:48px 32px}
+  .ribbon{margin:0 -32px 28px}
+  .sigs{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="switcher">
+  <button class="sw-btn active" onclick="show('syntax',this)">Syntax Systems</button>
+  <button class="sw-btn" onclick="show('grid',this)">GridView Analytics</button>
+  <button class="sw-btn" onclick="show('lucas',this)">LucasFrame Studios</button>
+  <button class="sw-btn" onclick="show('north',this)">Northfield Institute</button>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!--  SYNTAX SYSTEMS                               -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="letter letter-syntax visible" id="letter-syntax">
+<div class="page">
+  <div class="watermark">Syntax Systems</div>
+  <div class="stamp"><div class="stamp-border"><div class="stamp-inner"><span class="stamp-text">Offer<br/>Extended<br/>2026</span></div></div></div>
+  <div class="content">
+    <div class="header divider">
+      <div>
+        <div class="co-eyebrow accent">Lagos, Nigeria · Est. 2019</div>
+        <div class="co-name">Syntax Systems Ltd</div>
+        <div class="co-tag muted">Data Infrastructure &amp; Analytics Consultancy</div>
+      </div>
+      <div class="doc-meta">
+        <div class="meta-label muted">Date</div>
+        <div class="meta-val">2 June 2026</div>
+        <div class="meta-ref gold">REF: SSL/2026/JDA/0047</div>
+      </div>
+    </div>
+    <div class="ribbon">Offer of Employment — Confidential</div>
+    <div class="salute-date muted">2 June 2026</div>
+    <div class="candidate">Semilore James</div>
+    <p class="opening">Following a thorough review of your analytical foundations and demonstrated commitment to structured learning, we are pleased to extend this formal offer of employment. You bring working knowledge of SQL fundamentals and a disciplined approach to skill development that matches the demands of client-facing data work at Syntax Systems Ltd.</p>
+
+    <div class="sec-label divider">Position &amp; Terms</div>
+    <table class="terms">
+      <tr><td class="muted">Position</td><td class="highlight accent">Junior Data Analyst</td></tr>
+      <tr><td class="muted">Department</td><td>Data Infrastructure &amp; Client Reporting</td></tr>
+      <tr><td class="muted">Reporting To</td><td>Senior Project Manager · Simulation Division</td></tr>
+      <tr><td class="muted">Start Date</td><td>2 June 2026 (Immediate)</td></tr>
+      <tr><td class="muted">Engagement Type</td><td>Long-Form Simulation · Open-Ended</td></tr>
+      <tr><td class="muted">Working Hours</td><td>Minimum one session daily · 30 minutes minimum</td></tr>
+      <tr><td class="muted">Compensation</td><td>Portfolio equity, verified GitHub history, demonstrable SQL skills</td></tr>
+    </table>
+
+    <div class="sec-label divider">Duties &amp; Responsibilities</div>
+    <ul class="duties">
+      <li>Design and build relational database schemas from raw client data</li>
+      <li>Write, test, and document SQL across DDL, DML, and analytical query types</li>
+      <li>Migrate historical CSV data into structured schemas with documented decisions</li>
+      <li>Build and maintain a shared query library for non-technical stakeholders</li>
+      <li>Produce views, stored procedures, and index strategies for production use</li>
+      <li>Commit all work to GitHub with clear naming conventions and descriptive comments</li>
+      <li>Report task completion to your PM and respond to feedback within 24 hours</li>
+    </ul>
+
+    <div class="sec-label divider">Performance Expectations</div>
+    <p class="body-text">You are expected to produce real, reviewable deliverables for each task. Done means a file exists and is committed to GitHub. A task in progress for more than three days without communication will generate a PM follow-up. Growth is measured by task complexity over time — you will be stretched deliberately and incrementally as your SQL curriculum advances.</p>
+
+    <div class="closing divider">
+      <p class="body-text">We are confident you have the foundations to develop into a rigorous, commercially valuable data professional. Please confirm your acceptance by commencing your first assigned task on the Notion board. Your commencement of work constitutes acceptance of the terms herein.</p>
+      <div class="sign-off muted">With confidence in your trajectory,</div>
+      <div class="sigs">
+        <div class="sig-field"><div class="sig-name">C. Laurent</div><div class="sig-title accent">Senior Project Manager · Syntax Systems Ltd</div></div>
+        <div class="sig-field"><div class="sig-name">Semilore James</div><div class="sig-title muted">Candidate · Sign: commence first task</div></div>
+      </div>
+    </div>
+    <div class="footer divider">
+      <span class="muted">Syntax Systems Ltd · Lagos, NG</span>
+      <span class="muted">REF: SSL/2026/JDA/0047 · Page 1 of 1</span>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!--  GRIDVIEW ANALYTICS                           -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="letter letter-grid" id="letter-grid">
+<div class="page">
+  <div class="watermark">GridView</div>
+  <div class="stamp"><div class="stamp-border"><div class="stamp-inner"><span class="stamp-text">Offer<br/>Extended<br/>2026</span></div></div></div>
+  <div class="content">
+    <div class="header divider">
+      <div>
+        <div class="co-eyebrow accent">Abuja · Lagos · Est. 2021</div>
+        <div class="co-name">GridView Analytics</div>
+        <div class="co-tag muted">Business Intelligence &amp; Reporting Services</div>
+      </div>
+      <div class="doc-meta">
+        <div class="meta-label muted">Date</div>
+        <div class="meta-val">2 June 2026</div>
+        <div class="meta-ref gold">REF: GVA/2026/BRA/0019</div>
+      </div>
+    </div>
+    <div class="ribbon">Offer of Employment — Confidential</div>
+    <div class="salute-date muted">2 June 2026</div>
+    <div class="candidate">Semilore James</div>
+    <p class="opening">GridView Analytics operates on one principle: the numbers we put in front of clients must be right, and the way we present them must be clear. Having reviewed your existing Excel and Power BI proficiency, we are confident you can contribute to our FMCG reporting practice from day one. This offer reflects that assessment.</p>
+
+    <div class="sec-label divider">Position &amp; Terms</div>
+    <table class="terms">
+      <tr><td class="muted">Position</td><td class="highlight accent">BI Reporting Analyst</td></tr>
+      <tr><td class="muted">Department</td><td>Commercial Reporting · FMCG Practice</td></tr>
+      <tr><td class="muted">Reporting To</td><td>Senior Project Manager · Simulation Division</td></tr>
+      <tr><td class="muted">Start Date</td><td>2 June 2026 (Immediate)</td></tr>
+      <tr><td class="muted">Engagement Type</td><td>Long-Form Simulation · Open-Ended</td></tr>
+      <tr><td class="muted">Compensation</td><td>Portfolio equity, Excel and Power BI proficiency evidence, documented DAX library</td></tr>
+    </table>
+
+    <div class="sec-label divider">Duties &amp; Responsibilities</div>
+    <ul class="duties">
+      <li>Audit incoming client datasets and produce formal data quality reports</li>
+      <li>Build formula-driven cleaning sheets that are repeatable across monthly deliveries</li>
+      <li>Produce pivot tables, dashboards, and charts that communicate findings — not just display data</li>
+      <li>Build and maintain Power BI reports with correct data models and tested DAX measures</li>
+      <li>Write data quality impact memos for non-technical stakeholders</li>
+      <li>Maintain file naming conventions and folder structures that a new analyst could navigate immediately</li>
+    </ul>
+
+    <div class="sec-label divider">Performance Expectations</div>
+    <p class="body-text">A wrong number in a client report is a GridView crisis. Accuracy is the baseline. Presentation is what distinguishes our work. Every dashboard, every chart title, every memo you produce will be held to professional standards. Hardcoded values in cleaning sheets and default chart titles are not acceptable at this firm.</p>
+
+    <div class="closing divider">
+      <p class="body-text">We look forward to your contribution to the Palmridge engagement. Please confirm acceptance by beginning your first assigned task. Your commencement of work constitutes acceptance of the terms herein.</p>
+      <div class="sign-off muted">Yours professionally,</div>
+      <div class="sigs">
+        <div class="sig-field"><div class="sig-name">A. Mensah</div><div class="sig-title accent">Head of Analytics · GridView Analytics</div></div>
+        <div class="sig-field"><div class="sig-name">Semilore James</div><div class="sig-title muted">Candidate · Sign: commence first task</div></div>
+      </div>
+    </div>
+    <div class="footer divider">
+      <span class="muted">GridView Analytics · Abuja &amp; Lagos, NG</span>
+      <span class="muted">REF: GVA/2026/BRA/0019 · Page 1 of 1</span>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!--  LUCASFRAME STUDIOS                           -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="letter letter-lucas" id="letter-lucas">
+<div class="page">
+  <div class="watermark">LucasFrame</div>
+  <div class="stamp"><div class="stamp-border"><div class="stamp-inner"><span class="stamp-text">Offer<br/>Extended<br/>2026</span></div></div></div>
+  <div class="content">
+    <div class="header divider">
+      <div>
+        <div class="co-eyebrow accent">Lagos Island · Est. 2017</div>
+        <div class="co-name">LucasFrame Studios</div>
+        <div class="co-tag muted">Film, Media &amp; Branded Content Production</div>
+      </div>
+      <div class="doc-meta">
+        <div class="meta-label muted">Date</div>
+        <div class="meta-val">2 June 2026</div>
+        <div class="meta-ref gold">REF: LFS/2026/PDC/0031</div>
+      </div>
+    </div>
+    <div class="ribbon">Offer of Employment — Confidential</div>
+    <div class="salute-date muted">2 June 2026</div>
+    <div class="candidate">Semilore James</div>
+    <p class="opening">LucasFrame has always known how to make things that look good. What we have not always known is whether those things are on time and on budget. We are bringing you in to fix that — to turn 120,000 rows of production history into something our leadership team can actually use to make decisions. Welcome.</p>
+
+    <div class="sec-label divider">Position &amp; Terms</div>
+    <table class="terms">
+      <tr><td class="muted">Position</td><td class="highlight accent">Production Data Coordinator</td></tr>
+      <tr><td class="muted">Department</td><td>Operations &amp; Production Analytics</td></tr>
+      <tr><td class="muted">Reporting To</td><td>Senior Project Manager · Simulation Division</td></tr>
+      <tr><td class="muted">Start Date</td><td>2 June 2026 (Immediate)</td></tr>
+      <tr><td class="muted">Engagement Type</td><td>Long-Form Simulation · Open-Ended</td></tr>
+      <tr><td class="muted">Compensation</td><td>Portfolio equity, live Looker Studio dashboard, documented automation</td></tr>
+    </table>
+
+    <div class="sec-label divider">Duties &amp; Responsibilities</div>
+    <ul class="duties">
+      <li>Audit and clean production tracking data in Google Sheets using ARRAYFORMULA and QUERY</li>
+      <li>Answer operational questions from the Head of Production using structured sheet queries</li>
+      <li>Build and maintain a live Looker Studio dashboard accessible to production managers</li>
+      <li>Automate the Monday morning status summary using Google Apps Script</li>
+      <li>Answer the CEO's efficiency question with data — not opinion</li>
+      <li>Produce a handover package with findings that the team can act on after you leave</li>
+    </ul>
+
+    <div class="sec-label divider">Performance Expectations</div>
+    <p class="body-text">The dashboard you build will be checked every Monday morning by at least three production managers. If it's broken, outdated, or unclear, that reflects immediately on this engagement. The public Looker Studio link must work from any browser. The automation must send. The CEO question must receive a direct, data-backed answer.</p>
+
+    <div class="closing divider">
+      <p class="body-text">We are genuinely excited about what you will find in our data. Please confirm your acceptance by beginning your first task. Your commencement of work constitutes acceptance of the terms herein.</p>
+      <div class="sign-off muted">With creative and operational confidence,</div>
+      <div class="sigs">
+        <div class="sig-field"><div class="sig-name">T. Okonkwo</div><div class="sig-title accent">Head of Production · LucasFrame Studios</div></div>
+        <div class="sig-field"><div class="sig-name">Semilore James</div><div class="sig-title muted">Candidate · Sign: commence first task</div></div>
+      </div>
+    </div>
+    <div class="footer divider">
+      <span class="muted">LucasFrame Studios · Lagos Island, NG</span>
+      <span class="muted">REF: LFS/2026/PDC/0031 · Page 1 of 1</span>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════ -->
+<!--  NORTHFIELD                                   -->
+<!-- ══════════════════════════════════════════════ -->
+<div class="letter letter-north" id="letter-north">
+<div class="page">
+  <div class="watermark">Northfield</div>
+  <div class="stamp"><div class="stamp-border"><div class="stamp-inner"><span class="stamp-text">Offer<br/>Extended<br/>2026</span></div></div></div>
+  <div class="content">
+    <div class="header divider">
+      <div>
+        <div class="co-eyebrow accent">Abuja · Est. 2003</div>
+        <div class="co-name">Northfield Learning Institute</div>
+        <div class="co-tag muted">Research &amp; Higher Education</div>
+      </div>
+      <div class="doc-meta">
+        <div class="meta-label muted">Date</div>
+        <div class="meta-val">2 June 2026</div>
+        <div class="meta-ref gold">REF: NLI/2026/RCI/0008</div>
+      </div>
+    </div>
+    <div class="ribbon">Offer of Internship — Confidential</div>
+    <div class="salute-date muted">2 June 2026</div>
+    <div class="candidate">Semilore James</div>
+    <p class="opening">Northfield's academic registry holds 200,000 student records it cannot fully trust. Our current reporting system cannot answer the questions our Deputy Vice Chancellor is asking. You have been selected for this internship because you are actively developing the Python skills needed to address this — and because we believe the process of doing so, on real institutional data, will accelerate your development far beyond a classroom exercise.</p>
+
+    <div class="sec-label divider">Position &amp; Terms</div>
+    <table class="terms">
+      <tr><td class="muted">Position</td><td class="highlight accent">Research Computing Intern</td></tr>
+      <tr><td class="muted">Department</td><td>Academic Registry &amp; Research Computing</td></tr>
+      <tr><td class="muted">Reporting To</td><td>Senior Project Manager · Simulation Division</td></tr>
+      <tr><td class="muted">Start Date</td><td>2 June 2026 (Immediate)</td></tr>
+      <tr><td class="muted">Engagement Type</td><td>Long-Form Simulation · MIT 6.0001 Aligned</td></tr>
+      <tr><td class="muted">Compensation</td><td>Portfolio equity, complete Python project evidence, academic integrity findings report</td></tr>
+    </table>
+
+    <div class="sec-label divider">Duties &amp; Responsibilities</div>
+    <ul class="duties">
+      <li>Inspect, audit, and document the quality of student records using Python</li>
+      <li>Build a repeatable cleaning pipeline that produces a reliable clean dataset</li>
+      <li>Answer institutional analytical questions using pandas that current reports cannot address</li>
+      <li>Investigate and quantify the grade integrity discrepancy flagged by the academic integrity office</li>
+      <li>Produce visualisations for faculty presentation using matplotlib and seaborn</li>
+      <li>Build a StudentRecord class for use by the student portal development team</li>
+      <li>Harden the pipeline with exception handling and produce an error log</li>
+    </ul>
+
+    <div class="sec-label divider">Performance Expectations</div>
+    <p class="body-text">Tasks are sequenced to match your MIT 6.0001 curriculum. You will not be asked to use tools before you have studied them — but you will apply every concept immediately after learning it. Scripts must run without crashing. Findings must be stated precisely. The limitations section of your final README is not optional — it is what distinguishes careful analysis from overconfident reporting.</p>
+
+    <div class="closing divider">
+      <p class="body-text">We believe this internship will produce both institutional value for Northfield and substantial personal development for you. Please confirm acceptance by beginning your first assigned task. Your commencement of work constitutes acceptance of the terms herein.</p>
+      <div class="sign-off muted">With academic regard,</div>
+      <div class="sigs">
+        <div class="sig-field"><div class="sig-name">Dr. F. Adeleke</div><div class="sig-title accent">Head of Research Computing · Northfield LI</div></div>
+        <div class="sig-field"><div class="sig-name">Semilore James</div><div class="sig-title muted">Candidate · Sign: commence first task</div></div>
+      </div>
+    </div>
+    <div class="footer divider">
+      <span class="muted">Northfield Learning Institute · Abuja, NG</span>
+      <span class="muted">REF: NLI/2026/RCI/0008 · Page 1 of 1</span>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+function show(id, btn){
+  document.querySelectorAll('.letter').forEach(l=>l.classList.remove('visible'));
+  document.querySelectorAll('.sw-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('letter-'+id).classList.add('visible');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
